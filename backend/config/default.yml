@@ -1,0 +1,4 @@
+# Server configurations
+server:
+  host: "localhost"
+  port: 7676

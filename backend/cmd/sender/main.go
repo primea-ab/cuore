@@ -4,18 +4,14 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"lethe.se/vito/cuore/pkg/model"
 	"log"
 	"net/http"
 )
 
-type datapoint struct {
-	Name   string `json:"name"`
-	Status string `json:"status"`
-}
-
 func main() {
 	port := "7676"
-	db := make(map[string]datapoint)
+	db := make(map[string]model.Datapoint)
 
 	fmt.Println("Starting listener handlers")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -37,12 +33,12 @@ func main() {
 	}
 }
 
-func fetchData(w http.ResponseWriter, db map[string]datapoint) {
+func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
 	jsonResponse(w, db)
 }
 
 // Should I clean up http.HandleFunc call?
-func addData(w http.ResponseWriter, r *http.Request, db map[string]datapoint) {
+func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoint) {
 	if err := r.ParseForm(); err != nil {
 		_, err = fmt.Fprintf(w, "ParseForm() err: %v", err)
 		if err != nil {
@@ -56,7 +52,7 @@ func addData(w http.ResponseWriter, r *http.Request, db map[string]datapoint) {
 		errorResponse(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
 		return
 	}
-	var e datapoint
+	var e model.Datapoint
 	var unmarshalErr *json.UnmarshalTypeError
 
 	decoder := json.NewDecoder(r.Body)
