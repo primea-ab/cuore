@@ -1,8 +1,12 @@
 package model
 
 type Config struct {
-	Server struct {
+	Combined struct {
 		Port string `json:"port"`
+	} `json:"Combined"`
+	Sender struct {
 		Host string `json:"host"`
-	} `json:"server"`
+		Plugins []string `json:"plugins"`
+	} `json:"Sender"`
+
 }

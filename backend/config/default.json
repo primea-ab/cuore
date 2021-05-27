@@ -1,6 +1,9 @@
-{"server":
-  {"host": 
-    "localhost",
+{
+  "combined": {
     "port": "7676"
+  },
+  "sender": {
+    "host": "localhost",
+    "plugins": ["linux-ram", "foot-of-oak"]
   }
 }

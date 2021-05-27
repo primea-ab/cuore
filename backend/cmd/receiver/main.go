@@ -14,7 +14,7 @@ import (
 func main() {
 	cfg := serv.FetchConfig()
 
-	port := cfg.Server.Port
+	port := cfg.Combined.Port
 	db := make(map[string]model.Datapoint)
 
 	hittepa(db)
@@ -49,14 +49,13 @@ func main() {
 }
 
 func hittepa(db map[string]model.Datapoint) {
-  db["test"] = model.Datapoint{Name:"name", Status:"156", Type:"ram"}
+  db["test"] = model.Datapoint{Name:"name", Status:"I am a basic bitch", Type:"ram"}
 }
 
 func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
 	jsonResponse(w, db)
 }
 
-// Should I clean up http.HandleFunc call?
 func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoint) {
 	if err := r.ParseForm(); err != nil {
 		_, err = fmt.Fprintf(w, "ParseForm() err: %v", err)
