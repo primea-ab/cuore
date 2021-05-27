@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"lethe.se/vito/cuore/pkg/model"
 	"log"
 	"net/http"
@@ -12,9 +11,9 @@ import (
 )
 
 func main() {
-	handleConfig()
+	cfg := handleConfig()
 
-	port := "7676"
+	port := cfg.Server.Port
 	db := make(map[string]model.Datapoint)
 
 	fmt.Println("Starting listener handlers")
@@ -38,18 +37,20 @@ func main() {
 }
 
 func handleConfig() model.Config {
-	f, err := os.Open("config/default.yml")
+	f, err := os.Open("config/default.json")
 	if err != nil {
 		log.Fatal("Could not open config file")
 	}
 	defer f.Close()
 
 	var cfg model.Config
-	decoder := yaml.NewDecoder(f)
+	decoder := json.NewDecoder(f)
 	err = decoder.Decode(&cfg)
 	if err != nil {
+		fmt.Println(err)
 		log.Fatal("Could not decode config file")
 	}
+
 	return cfg
 }
 
