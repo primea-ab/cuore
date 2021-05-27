@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"lethe.se/vito/cuore/pkg/serv"
 	"lethe.se/vito/cuore/pkg/plugins"
+	"time"
 )
 
 func main() {
@@ -19,10 +20,25 @@ func main() {
 }
 
 func loadPlugins(plg []string) {
-	for _, p := range plg {
+	loadedPlugins := make([]plugins.Plugin, len(plg))
+	for i, p := range plg {
 		fmt.Println("Loading plugin " + p)
 		loadedPlugin := plugins.GetPlugin(p)
-		fmt.Println(loadedPlugin.CollectData())
+		loadedPlugins[i] = loadedPlugin
 	}
+	var asdf int64 = 0
+
+	for {
+		callPlugins(loadedPlugins, asdf)
+		asdf = asdf + 1
+		time.Sleep(time.Millisecond * 2)
+	}
+}
+
+func callPlugins(loadedPlugins []plugins.Plugin, i int64) {
+	for _, p := range loadedPlugins {
+		fmt.Println(p.Identifier())
+	}
+	fmt.Println(i)
 }
 
