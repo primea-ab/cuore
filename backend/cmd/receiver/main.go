@@ -5,13 +5,13 @@ import (
 	"errors"
 	"fmt"
 	"lethe.se/vito/cuore/pkg/model"
+	"lethe.se/vito/cuore/pkg/serv"
 	"log"
 	"net/http"
-	"os"
 )
 
 func main() {
-	cfg := handleConfig()
+	cfg := serv.FetchConfig()
 
 	port := cfg.Server.Port
 	db := make(map[string]model.Datapoint)
@@ -34,24 +34,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen to port %v", port)
 	}
-}
-
-func handleConfig() model.Config {
-	f, err := os.Open("config/default.json")
-	if err != nil {
-		log.Fatal("Could not open config file")
-	}
-	defer f.Close()
-
-	var cfg model.Config
-	decoder := json.NewDecoder(f)
-	err = decoder.Decode(&cfg)
-	if err != nil {
-		fmt.Println(err)
-		log.Fatal("Could not decode config file")
-	}
-
-	return cfg
 }
 
 func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
