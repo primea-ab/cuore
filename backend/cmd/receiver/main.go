@@ -16,6 +16,8 @@ func main() {
 	port := cfg.Server.Port
 	db := make(map[string]model.Datapoint)
 
+	hittepa(db)
+
 	fmt.Println("Starting listener handlers")
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
@@ -34,6 +36,10 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen to port %v", port)
 	}
+}
+
+func hittepa(db map[string]model.Datapoint) {
+  db["test"] = model.Datapoint{Name:"name", Status:"156", Type:"ram"}
 }
 
 func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
