@@ -2,24 +2,67 @@
 <html dir="ltr" lang="en-US">
     <head>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="css/index.css">
-        <script src="client.js"></script>
+        <style>
+            .container {
+                flex: 1;
+            }
 
+            .page-title {
+                font-size: 48px;
+                color: darkslategray;
+            }
+
+            .widget-list {
+                list-style-type: none;
+            }
+
+            .widget-base {
+                padding: 5em;
+            }
+
+            .widget-title {
+                color: darkslategray;
+            }
+
+            .data-container {
+                display: flex;
+                justify-content: flex-start;
+
+            }
+
+            .data-element {
+                width: 200px;
+            }
+        </style>
     </head>
     <body>
         <div class="container">
-            <h1 class="pageTitle">Cuore</h1>
-            <ul class="widgetList">
-                <li class="widgetBase">
-                    <h2 class="widgetTitle">
+            <h1 class="page-title">Cuore</h1>
+            <ul class="widget-list">
+                <li class="widget-base">
+                    <h2 class="widget-title">
                         RAM Indicator
                     </h2>
-                    <div class="dataContainer">
-                        <div class="dataElement"><b>RAM Usage:</b><br> 64/100</div>
-                        <div class="dataElement"><b>Wow. Data:</b><br> 1000 GB</div>
+                    <div class="data-container">
+                        <label class="data-element"><b>Wow. Data:</b><br> <div class="ram-data"></div></label>
+                        <label class="data-element"><b>Wow. Data:</b><br> 1000 GB</label>
                     </div>
                 </li>
             </ol>
         </div>      
     </body>
+    	
+	<script>
+        const ramDataField = document.querySelector('.ram-data');
+        const url = "http://localhost:7676/api"; 
+
+        const xhr = new XMLHttpRequest();
+        xhr.onload = () => {
+            const status = JSON.parse(xhr.response)["test"]["status"];
+            ramDataField.textContent = status; 
+        }
+
+        xhr.open("GET", url);
+        xhr.send();
+    </script>
 </html>

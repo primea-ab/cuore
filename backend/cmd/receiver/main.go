@@ -7,6 +7,7 @@ import (
 	"lethe.se/vito/cuore/pkg/model"
 	"lethe.se/vito/cuore/pkg/serv"
 	"log"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -19,7 +20,16 @@ func main() {
 	hittepa(db)
 
 	fmt.Println("Starting listener handlers")
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		body, err := ioutil.ReadFile("../frontend/index.html")
+    	if err != nil {
+        	log.Printf("%v", err)
+    	}
+		w.Write(body)
+	})
+
+	http.HandleFunc("/api", func(w http.ResponseWriter, r *http.Request) {
 		switch r.Method {
 		case http.MethodGet:
 			fetchData(w, db)
