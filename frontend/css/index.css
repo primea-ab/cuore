@@ -1,0 +1,30 @@
+.container {
+    flex: 1;
+}
+
+.pageTitle {
+    font-size: 48px;
+    color: darkslategray;
+}
+
+.widgetList {
+    list-style-type: none;
+}
+
+.widgetBase {
+    padding: 5em;
+}
+
+.widgetTitle {
+    color: darkslategray;
+}
+
+.dataContainer {
+    display: flex;
+    justify-content: flex-start;
+
+}
+
+.dataElement {
+    width: 200px;
+}
