@@ -45,7 +45,6 @@ func runPlugin(plugin plugins.Plugin, identifier string, receiver string, port s
 		if err != nil {
 			fmt.Println("Error posting plugin data to server ", err)
 		}
-		defer res.Body.Close()
 
 		time.Sleep(plugin.Interval())
 	}	
