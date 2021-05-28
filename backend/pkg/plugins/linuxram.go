@@ -17,7 +17,7 @@ func (l LinuxRam) Name() string {
 }
 
 func (l LinuxRam) Type() string {
-	return "ram"
+	return "bar"
 }
 
 func (l LinuxRam) Interval() time.Duration {

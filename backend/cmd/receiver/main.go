@@ -9,6 +9,7 @@ import (
 	"log"
 	"io/ioutil"
 	"net/http"
+	"time"
 )
 
 func main() {
@@ -78,6 +79,9 @@ func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoi
 		}
 		return
 	}
+
+	e.Timestamp = time.Now().Format(time.UnixDate)
+
 	// TODO: This can be done better later by creating nested maps
 	db[e.Identifier + "-" + e.Name] = e
 	errorResponse(w, "Success", http.StatusOK)
