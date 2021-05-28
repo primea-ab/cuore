@@ -3,7 +3,8 @@
     "port": "7676"
   },
   "sender": {
-    "host": "localhost",
+    "name": "Dator 5",
+    "receiver": "localhost",
     "plugins": ["linux-ram", "foot-of-oak"]
   }
 }

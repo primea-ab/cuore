@@ -1,10 +1,12 @@
 package plugins
 
 import (
-	"lethe.se/vito/cuore/pkg/model"
+	"time"
 )
 
 type Plugin interface {
-	Identifier() string
-	CollectData() model.Datapoint
+	Name() string
+	Type() string
+	Interval() time.Duration
+	CollectData() string
 }

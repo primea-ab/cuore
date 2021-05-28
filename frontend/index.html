@@ -40,29 +40,46 @@
             <h1 class="page-title">Cuore</h1>
             <ul class="widget-list">
                 <li class="widget-base">
-                    <h2 class="widget-title">
+                    <pre id="json-content">
+
+                    </pre>
+                    <!--<h2 class="widget-title">
                         RAM Indicator
                     </h2>
                     <div class="data-container">
                         <label class="data-element"><b>Wow. Data:</b><br> <div class="ram-data"></div></label>
                         <label class="data-element"><b>Wow. Data:</b><br> 1000 GB</label>
-                    </div>
+                    </div>-->
                 </li>
             </ol>
         </div>      
     </body>
     	
 	<script>
-        const ramDataField = document.querySelector('.ram-data');
+        //const ramDataField = document.querySelector('.ram-data');
+        const jsonfield = document.querySelector('#json-content');
         const url = "http://localhost:7676/api"; 
+
+        const replacer = (key, value) => {
+            console.log(key, value)
+            if (value === '{') {
+                return '\n\t{'
+            }
+            return value
+        }
 
         const xhr = new XMLHttpRequest();
         xhr.onload = () => {
-            const status = JSON.parse(xhr.response)["test"]["status"];
-            ramDataField.textContent = status; 
+            const status = JSON.stringify(JSON.parse(xhr.response), null, '\t');
+            for (key of status) {
+                console.log(key)
+            }
+            console.log(status)
+            jsonfield.textContent = status; 
         }
 
         xhr.open("GET", url);
         xhr.send();
+
     </script>
 </html>

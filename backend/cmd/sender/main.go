@@ -4,41 +4,50 @@ import (
 	"fmt"
 	"lethe.se/vito/cuore/pkg/serv"
 	"lethe.se/vito/cuore/pkg/plugins"
+	"lethe.se/vito/cuore/pkg/model"
 	"time"
+	"encoding/json"
+	"net/http"
+	"bytes"
 )
 
 func main() {
 	cfg := serv.FetchConfig()
 
-	host := cfg.Sender.Host
+	identifier := cfg.Sender.Name
+	receiver := cfg.Sender.Receiver
 	port := cfg.Combined.Port
 	plg := cfg.Sender.Plugins
 
-	loadPlugins(plg)
+	loadPlugins(plg, identifier, receiver, port)
 
-	fmt.Println("Starting send of data to host '" + host + "' using port '" + port + "'")
+	fmt.Println("Starting send of data to receiver '" + receiver + "' using port '" + port + "' using identifier '" + identifier + "'")
 }
 
-func loadPlugins(plg []string) {
-	loadedPlugins := make([]plugins.Plugin, len(plg))
-	for i, p := range plg {
+func loadPlugins(plg []string, identifier string, receiver string, port string) {
+	for _, p := range plg {
 		fmt.Println("Loading plugin " + p)
 		loadedPlugin := plugins.GetPlugin(p)
-		loadedPlugins[i] = loadedPlugin
+		go runPlugin(loadedPlugin, identifier, receiver, port)
 	}
-	var asdf int64 = 0
 
-	for {
-		callPlugins(loadedPlugins, asdf)
-		asdf = asdf + 1
-		time.Sleep(time.Millisecond * 2)
-	}
+	fmt.Println("All plugins loaded")
+	for {}
 }
 
-func callPlugins(loadedPlugins []plugins.Plugin, i int64) {
-	for _, p := range loadedPlugins {
-		fmt.Println(p.Identifier())
-	}
-	fmt.Println(i)
+func runPlugin(plugin plugins.Plugin, identifier string, receiver string, port string) {
+	for {
+		response := plugin.CollectData()
+		datapoint := model.Datapoint{Identifier: identifier, Name: plugin.Name(), Status: response, Type: plugin.Type()}
+		jsonResp, _ := json.Marshal(datapoint)
+		fmt.Println(datapoint)
+
+		_, err := http.Post("http://" + receiver + ":" + port + "/api", "application/json", bytes.NewBuffer(jsonResp))
+		if err != nil {
+			fmt.Println("Error posting plugin data to server ", err)
+		}
+
+		time.Sleep(plugin.Interval())
+	}	
 }
 

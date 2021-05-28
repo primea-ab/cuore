@@ -5,7 +5,8 @@ type Config struct {
 		Port string `json:"port"`
 	} `json:"Combined"`
 	Sender struct {
-		Host string `json:"host"`
+		Name string `json:"name"`
+		Receiver string `json:"receiver"`
 		Plugins []string `json:"plugins"`
 	} `json:"Sender"`
 

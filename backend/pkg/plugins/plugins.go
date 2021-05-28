@@ -5,6 +5,7 @@ import (
 )
 
 func GetPlugin(identifier string) Plugin {
+	// TODO: Fix loading of plugins
 	switch identifier {
 		case "linux-ram":
 			return LinuxRam{}

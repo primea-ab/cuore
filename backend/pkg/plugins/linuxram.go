@@ -1,17 +1,26 @@
 package plugins
 
 import (
-	"lethe.se/vito/cuore/pkg/model"
+	"time"
 )
 
 type LinuxRam struct {
 
 }
 
-func (l LinuxRam) Identifier() string {
+func (l LinuxRam) Name() string {
 	return "linux-ram"
 }
 
-func (l LinuxRam) CollectData() model.Datapoint {
-	return model.Datapoint{Name:"test", Status:"teststatus", Type:"testtype"}
+func (l LinuxRam) Type() string {
+	return "ram"
+}
+
+func (l LinuxRam) Interval() time.Duration {
+	return time.Second * 5
+}
+
+
+func (l LinuxRam) CollectData() string {
+	return "ram baby"
 }

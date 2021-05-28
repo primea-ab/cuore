@@ -17,8 +17,6 @@ func main() {
 	port := cfg.Combined.Port
 	db := make(map[string]model.Datapoint)
 
-	hittepa(db)
-
 	fmt.Println("Starting listener handlers")
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -46,10 +44,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to listen to port %v", port)
 	}
-}
-
-func hittepa(db map[string]model.Datapoint) {
-  db["test"] = model.Datapoint{Name:"name", Status:"I am a basic bitch", Type:"ram"}
 }
 
 func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
@@ -84,7 +78,8 @@ func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoi
 		}
 		return
 	}
-	db[e.Name] = e
+	// TODO: This can be done better later by creating nested maps
+	db[e.Identifier + "-" + e.Name] = e
 	errorResponse(w, "Success", http.StatusOK)
 	return
 }
