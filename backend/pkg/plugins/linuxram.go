@@ -2,6 +2,10 @@ package plugins
 
 import (
 	"time"
+	"fmt"
+	"os/exec"
+	"strings"
+	"regexp"
 )
 
 type LinuxRam struct {
@@ -22,5 +26,12 @@ func (l LinuxRam) Interval() time.Duration {
 
 
 func (l LinuxRam) CollectData() string {
-	return "ram baby"
+	out, err := exec.Command("free").Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	ram := fmt.Sprintf("%s", out)
+	memSplit := strings.SplitAfter(ram, "\n")
+	rowSplit := regexp.MustCompile("\\s+").Split(memSplit[1], -1)
+	return rowSplit[2] + " / " + rowSplit[1]
 }

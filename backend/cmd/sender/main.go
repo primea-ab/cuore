@@ -40,7 +40,6 @@ func runPlugin(plugin plugins.Plugin, identifier string, receiver string, port s
 		response := plugin.CollectData()
 		datapoint := model.Datapoint{Identifier: identifier, Name: plugin.Name(), Status: response, Type: plugin.Type()}
 		jsonResp, _ := json.Marshal(datapoint)
-		fmt.Println(datapoint)
 
 		_, err := http.Post("http://" + receiver + ":" + port + "/api", "application/json", bytes.NewBuffer(jsonResp))
 		if err != nil {

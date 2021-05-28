@@ -2,6 +2,9 @@ package plugins
 
 import (
 	"time"
+	"os/exec"
+	"fmt"
+	"strings"
 )
 
 type FootOfOak struct {
@@ -21,5 +24,11 @@ func (l FootOfOak) Interval() time.Duration {
 }
 
 func (l FootOfOak) CollectData() string {
-	return "No new foot yet :("
+	out, err := exec.Command("uptime", "-p").Output()
+	if err != nil {
+		fmt.Println(err)
+	}
+	uptime := fmt.Sprintf("%s", out)
+
+	return "No new foot yet (" + strings.ReplaceAll(uptime, "\n", "") + ")"
 }

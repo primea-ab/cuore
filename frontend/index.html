@@ -56,30 +56,22 @@
     </body>
     	
 	<script>
-        //const ramDataField = document.querySelector('.ram-data');
         const jsonfield = document.querySelector('#json-content');
         const url = "http://localhost:7676/api"; 
 
-        const replacer = (key, value) => {
-            console.log(key, value)
-            if (value === '{') {
-                return '\n\t{'
+        const loadData = () => {
+            const xhr = new XMLHttpRequest();
+            xhr.onload = () => {
+                const status = JSON.stringify(JSON.parse(xhr.response), null, '\t');
+                jsonfield.textContent = status; 
             }
-            return value
+
+            xhr.open("GET", url);
+            xhr.send();
         }
 
-        const xhr = new XMLHttpRequest();
-        xhr.onload = () => {
-            const status = JSON.stringify(JSON.parse(xhr.response), null, '\t');
-            for (key of status) {
-                console.log(key)
-            }
-            console.log(status)
-            jsonfield.textContent = status; 
-        }
-
-        xhr.open("GET", url);
-        xhr.send();
+        setInterval(loadData, 1000)
+        
 
     </script>
 </html>
