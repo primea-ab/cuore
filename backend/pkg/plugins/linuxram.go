@@ -21,11 +21,12 @@ func (l LinuxRam) Type() string {
 }
 
 func (l LinuxRam) Interval() time.Duration {
-	return time.Second * 5
+	return time.Second * 10
 }
 
 func (l LinuxRam) CollectData() string {
-	out, err := exec.Command("free", "-h").Output()
+	cmd := exec.Command("free")
+	out, err := cmd.Output()
 	if err != nil {
 		fmt.Println(err)
 	}
@@ -34,3 +35,4 @@ func (l LinuxRam) CollectData() string {
 	rowSplit := regexp.MustCompile("\\s+").Split(memSplit[1], -1)
 	return rowSplit[2] + " / " + rowSplit[1]
 }
+	
