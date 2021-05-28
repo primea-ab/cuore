@@ -32,7 +32,7 @@ func loadPlugins(plg []string, identifier string, receiver string, port string) 
 	}
 
 	fmt.Println("All plugins loaded")
-	for {}
+	select {}
 }
 
 func runPlugin(plugin plugins.Plugin, identifier string, receiver string, port string) {

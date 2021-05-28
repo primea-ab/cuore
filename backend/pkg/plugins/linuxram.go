@@ -24,7 +24,6 @@ func (l LinuxRam) Interval() time.Duration {
 	return time.Second * 5
 }
 
-
 func (l LinuxRam) CollectData() string {
 	out, err := exec.Command("free", "-h").Output()
 	if err != nil {
