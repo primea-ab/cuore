@@ -16,7 +16,7 @@ func main() {
 	cfg := serv.FetchConfig()
 
 	port := cfg.Combined.Port
-	db := make(map[string]model.Datapoint)
+	db := make(map[string]map[string]model.Datapoint)
 
 	fmt.Println("Starting listener handlers")
 
@@ -35,7 +35,7 @@ func main() {
 		case http.MethodPost:
 			addData(w, r, db)
 		default:
-			errorResponse(w, "Invalid HTTP Method", http.StatusMethodNotAllowed)
+			response(w, "Invalid HTTP Method", http.StatusMethodNotAllowed)
 			return
 		}
 	})
@@ -47,11 +47,11 @@ func main() {
 	}
 }
 
-func fetchData(w http.ResponseWriter, db map[string]model.Datapoint) {
+func fetchData(w http.ResponseWriter, db map[string]map[string]model.Datapoint) {
 	jsonResponse(w, db)
 }
 
-func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoint) {
+func addData(w http.ResponseWriter, r *http.Request, db map[string]map[string]model.Datapoint) {
 	if err := r.ParseForm(); err != nil {
 		_, err = fmt.Fprintf(w, "ParseForm() err: %v", err)
 		if err != nil {
@@ -62,7 +62,7 @@ func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoi
 
 	headerContentTtype := r.Header.Get("Content-Type")
 	if headerContentTtype != "application/json" {
-		errorResponse(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
+		response(w, "Content Type is not application/json", http.StatusUnsupportedMediaType)
 		return
 	}
 	var e model.Datapoint
@@ -73,22 +73,26 @@ func addData(w http.ResponseWriter, r *http.Request, db map[string]model.Datapoi
 	err := decoder.Decode(&e)
 	if err != nil {
 		if errors.As(err, &unmarshalErr) {
-			errorResponse(w, "Bad Request. Wrong Type provided for field " + unmarshalErr.Field, http.StatusBadRequest)
+			response(w, "Bad Request. Wrong Type provided for field " + unmarshalErr.Field, http.StatusBadRequest)
 		} else {
-			errorResponse(w, "Bad Request " + err.Error(), http.StatusBadRequest)
+			response(w, "Bad Request " + err.Error(), http.StatusBadRequest)
 		}
 		return
 	}
 
 	e.Timestamp = time.Now().Format(time.UnixDate)
 
-	// TODO: This can be done better later by creating nested maps
-	db[e.Identifier + "-" + e.Name] = e
-	errorResponse(w, "Success", http.StatusOK)
+	if db[e.Identifier] == nil {
+		db[e.Identifier] = make(map[string]model.Datapoint)
+	}
+	idb := db[e.Identifier]
+	idb[e.Name] = e
+
+	response(w, "Success", http.StatusOK)
 	return
 }
 
-func errorResponse(w http.ResponseWriter, message string, httpStatusCode int) {
+func response(w http.ResponseWriter, message string, httpStatusCode int) {
 	w.WriteHeader(httpStatusCode)
 	resp := make(map[string]string)
 	resp["message"] = message
