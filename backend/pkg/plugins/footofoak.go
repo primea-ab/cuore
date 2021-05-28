@@ -12,7 +12,7 @@ type FootOfOak struct {
 }
 
 func (l FootOfOak) Name() string {
-	return "foot-of-oak"
+	return "uptime"
 }
 
 func (l FootOfOak) Type() string {
@@ -30,5 +30,5 @@ func (l FootOfOak) CollectData() string {
 	}
 	uptime := fmt.Sprintf("%s", out)
 
-	return "No new foot yet (" + strings.ReplaceAll(uptime, "\n", "") + ")"
+	return strings.ReplaceAll(strings.ReplaceAll(uptime, "\n", ""), "up ", "")
 }

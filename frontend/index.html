@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html dir="ltr" lang="en-US">
+<html>
     <head>
         <meta charset="utf-8">
         <style>
@@ -8,16 +8,13 @@
             }
 
             .page-title {
-                font-size: 48px;
+                font-size: 3rem;
                 color: darkslategray;
             }
 
             .widget-list {
+                padding: 0 5rem;
                 list-style-type: none;
-            }
-
-            .widget-base {
-                padding: 5em;
             }
 
             .widget-title {
@@ -27,51 +24,129 @@
             .data-container {
                 display: flex;
                 justify-content: flex-start;
+            }
 
+            .data-title {
+                font-size: 1.5rem;
+            }
+
+            .data-object {
+                padding-bottom: 1rem;
             }
 
             .data-element {
                 width: 200px;
+            }
+
+            .data-footer {
+                font-size: 0.6rem;
+                color: darkslategray;
             }
         </style>
     </head>
     <body>
         <div class="container">
             <h1 class="page-title">Cuore</h1>
-            <ul class="widget-list">
-                <li class="widget-base">
-                    <pre id="json-content">
-
-                    </pre>
-                    <!--<h2 class="widget-title">
-                        RAM Indicator
-                    </h2>
-                    <div class="data-container">
-                        <label class="data-element"><b>Wow. Data:</b><br> <div class="ram-data"></div></label>
-                        <label class="data-element"><b>Wow. Data:</b><br> 1000 GB</label>
-                    </div>-->
-                </li>
-            </ol>
+            <div class="widget-list" id="data-content"></div>
         </div>      
     </body>
     	
 	<script>
-        const jsonfield = document.querySelector('#json-content');
         const url = "/api"; 
 
         const loadData = () => {
             const xhr = new XMLHttpRequest();
             xhr.onload = () => {
                 const status = JSON.stringify(JSON.parse(xhr.response), null, '\t');
-                jsonfield.textContent = status; 
+                updateWidgets(JSON.parse(xhr.response))
             }
 
             xhr.open("GET", url);
             xhr.send();
         }
 
+        const os_keywords = ['linux', 'windows']
+
+        const prettifyName = (name) => {
+            return name
+            .split('-')
+            .filter(word => {
+                return os_keywords.indexOf(word) == -1;
+            })
+            .map(word => {
+                return word[0].toUpperCase() + word.substring(1)
+            })
+            .join(' ');
+        }
+
+        const createTextElement = (element) => {
+            return `<div>${element.status}</div>`;
+        }
+
+        const getBarColor = (progress) => {
+            if (progress < 0.2) {
+                return '#03e303'
+            } else if (progress < 0.5) {
+                return 'orange'
+            } else {
+                return 'red'
+            }
+        }
+
+        const createBarElement = (element) => {
+            values = element.status.split(' / ').map(Number)
+            progress = values[0] / values[1]
+            let statusDiv = document.createElement('div');
+            statusDiv.style.background = `linear-gradient(to right, ${getBarColor(progress)} ${progress * 100}%, transparent ${progress * 100}%)`;
+            statusDiv.style.border = '1px solid darkslategray'
+            statusDiv.style.height = '1.5rem'
+            statusDiv.style.lineHeight = '1.5'
+            statusDiv.style.textAlign = 'center'
+
+            statusDiv.innerText = element.status
+            console.log(statusDiv.outerHTML)
+            return statusDiv.outerHTML;
+        }
+
+        const createStatusElement = (element) => {
+            switch(element.type) {
+                case 'bar':
+                    return createBarElement(element);
+                default:
+                    return createTextElement(element);
+            }
+        }
+
+        const updateWidgets = (data) => {
+            const children = []
+            for (entity in data) {
+                let widgetBase = document.createElement("div");
+                widgetBase.innerHTML = `
+                    <h2 class="widget-title">
+                        ${entity}
+                    </h2>
+                `;
+                for (name in data[entity]) {
+                    const cdo = data[entity][name];
+                    let child = document.createElement("div");
+                    child.innerHTML = `
+                        <div class="data-object">
+                            <div class="data-title">${prettifyName(cdo.name)}</div>
+                            ${createStatusElement(cdo)}
+                            <div class="data-footer">${cdo.timestamp}</div>
+                        </div>
+                    `;
+                    widgetBase.appendChild(child)
+                }
+                children.push(widgetBase)
+            }
+
+
+            document.getElementById("data-content").replaceChildren(...children);
+        }
+
         setInterval(loadData, 1000)
-        
+        //loadData()
 
     </script>
 </html>
