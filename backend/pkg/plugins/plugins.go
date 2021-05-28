@@ -13,6 +13,8 @@ func GetPlugin(identifier string) Plugin {
 			return FootOfOak{}
 		case "linux-cpu":
 			return LinuxCPU{}
+		case "fire-man":
+			return FireMan{}
 		default:
 			log.Fatalf("Could not find plugin %v", identifier)
 			return nil
